@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>Chronos aggregator project</name>
+
+  <groupId>chronos</groupId>
+  <artifactId>chronos</artifactId>
+  <packaging>pom</packaging>
+  <version>0.1-SNAPSHOT</version>
+
+  <modules>
+    <module>chronos-core</module>
+    <module>chronos-ejbs</module>
+    <module>chronos-web</module>
+  </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <unzipCommand>/usr/bin/unzip -o > err.txt</unzipCommand>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>chronos</groupId>
+        <artifactId>chronos-core</artifactId>
+        <version>0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>chronos</groupId>
+        <artifactId>chronos-ejbs</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <type>ejb</type>
+      </dependency>
+      <dependency>
+        <groupId>chronos</groupId>
+        <artifactId>chronos-web</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <type>war</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <distributionManagement>
+    <site>
+      <id>site</id>
+      <name>project website</name>
+      <url>scp://local.company.com/websites/project.company.com/</url>
+    </site>
+  </distributionManagement>
+</project>

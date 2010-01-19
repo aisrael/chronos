@@ -1,0 +1,6 @@
+.*
+!.gitignore
+target/
+nbactions.xml
+nbproject
+derby.log
