@@ -9,8 +9,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.JobDataMap;
@@ -69,28 +67,15 @@ public class ChronosServletListener implements ServletContextListener {
     private void initializeQuartzJob(final Scheduler scheduler)
             throws SchedulerException {
         try {
-            final InitialContext ic = new InitialContext();
-            final Object obj = ic.lookup("jdbc/PBR");
-            if (obj != null) {
-                logger.trace("JNDI lookup of \"jdbc/PBR\" returned "
-                        + obj.getClass().getName() + "@"
-                        + System.identityHashCode(obj));
-                if (obj instanceof DataSource) {
-                    final JobDetail jobDetail = new JobDetail("TestJob", TestJob.class);
-                    final JobDataMap jobDataMap = jobDetail.getJobDataMap();
-                    jobDataMap.put("dataSource", obj);
+            final JobDetail jobDetail = new JobDetail("TestJob", TestJob.class);
+            final JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.put(InitialContext.class.getName(), new InitialContext());
 
-                    final Trigger trigger = TriggerUtils.makeMinutelyTrigger();
-                    trigger.setStartTime(TriggerUtils.getEvenMinuteDate(new Date()));
-                    trigger.setName("TestTrigger");
+            final Trigger trigger = TriggerUtils.makeMinutelyTrigger();
+            trigger.setStartTime(TriggerUtils.getEvenMinuteDate(new Date()));
+            trigger.setName("TestTrigger");
 
-                    scheduler.scheduleJob(jobDetail, trigger);
-                } else {
-                    logger.warn("Object at \"jdbc/PBR\" is not a DataSource!");
-                }
-            } else {
-                logger.warn("JNDI lookup of \"jdbc/PBR\" returned null!");
-            }
+            scheduler.scheduleJob(jobDetail, trigger);
         } catch (final NamingException e) {
             logger.error("JNDI Exception: " + e.getMessage(), e);
         }
