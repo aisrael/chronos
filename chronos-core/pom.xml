@@ -18,12 +18,14 @@
   </dependencies>
   <build>
     <plugins>
+      <!--
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <encoding>iso-8859-1</encoding>
         </configuration>
       </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
