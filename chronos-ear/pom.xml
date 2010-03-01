@@ -8,12 +8,12 @@
   <groupId>chronos.aggregator</groupId>
   <artifactId>chronos-ear</artifactId>
   <packaging>ear</packaging>
-  <version>1.0</version>
+  <version>0.1-SNAPSHOT</version>
 
   <parent>
     <groupId>chronos</groupId>
     <artifactId>aggregator</artifactId>
-    <version>1.0</version>
+    <version>0.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -32,7 +32,7 @@
           <artifactId>ant-launcher</artifactId>
         </exclusion>
       </exclusions>
-      <version>1.0</version>
+      <version>0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <!-- chronos-web -->
@@ -40,7 +40,7 @@
       <groupId>chronos.aggregator</groupId>
       <artifactId>chronos-web</artifactId>
       <type>war</type>
-      <version>1.0</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
