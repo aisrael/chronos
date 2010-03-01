@@ -11,7 +11,7 @@
 
   <name>Chronos EAR aggregator module</name>
 
-  <groupId>chronos</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-ear</artifactId>
   <packaging>ear</packaging>
   <version>0.1-SNAPSHOT</version>
@@ -19,9 +19,8 @@
   <dependencies>
     <!-- chronos-core -->
     <dependency>
-      <groupId>chronos</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
-      <version>${project.version}</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
@@ -33,13 +32,15 @@
           <artifactId>ant-launcher</artifactId>
         </exclusion>
       </exclusions>
+      <version>0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <!-- chronos-web -->
     <dependency>
-      <groupId>chronos</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-web</artifactId>
-      <version>${project.version}</version>
       <type>war</type>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -63,8 +64,8 @@
           <generateApplicationXml>false</generateApplicationXml>
           <modules>
             <jarModule>
-              <groupId>ph.gov.business</groupId>
-              <artifactId>pbr-webservice</artifactId>
+              <groupId>chronos.chronos</groupId>
+              <artifactId>chronos-core</artifactId>
               <bundleDir>/lib</bundleDir>
             </jarModule>
           </modules>

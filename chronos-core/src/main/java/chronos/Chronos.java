@@ -8,7 +8,7 @@ package chronos;
  *
  * @author Alistair A. Israel
  */
-public class Chronos {
+public abstract class Chronos {
 
     /**
      * {@value #CHRONOS}

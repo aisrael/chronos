@@ -11,7 +11,7 @@
 
   <name>Chronos Web</name>
 
-  <groupId>chronos</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-web</artifactId>
   <packaging>war</packaging>
   <version>0.1-SNAPSHOT</version>
@@ -22,14 +22,6 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>chronos</groupId>
-      <artifactId>chronos-core</artifactId>
-      <type>jar</type>
-      <version>0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-
-    </dependency>
 
     <!--
       Core utilities used by other modules. Define this if you use

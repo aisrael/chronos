@@ -50,19 +50,19 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>chronos</groupId>
+        <groupId>chronos.chronos</groupId>
         <artifactId>chronos-core</artifactId>
         <type>jar</type>
         <version>0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>chronos</groupId>
+        <groupId>chronos.chronos</groupId>
         <artifactId>chronos-beans</artifactId>
         <type>ejb</type>
         <version>0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>chronos</groupId>
+        <groupId>chronos.chronos</groupId>
         <artifactId>chronos-web</artifactId>
         <type>war</type>
         <version>0.1-SNAPSHOT</version>

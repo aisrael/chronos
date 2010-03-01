@@ -11,7 +11,7 @@
 
   <name>Chronos core classes</name>
 
-  <groupId>chronos</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-core</artifactId>
   <packaging>jar</packaging>
   <version>0.1-SNAPSHOT</version>

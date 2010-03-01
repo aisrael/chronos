@@ -11,14 +11,17 @@
 
   <name>Chronos EJBs</name>
 
-  <groupId>chronos</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-beans</artifactId>
   <packaging>ejb</packaging>
 
   <dependencies>
     <dependency>
-      <groupId>chronos</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
+      <version>0.1-SNAPSHOT</version>
+      <type>jar</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
