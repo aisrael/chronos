@@ -35,7 +35,8 @@
       <type>ejb</type>
       <scope>provided</scope>
     </dependency>
-
+    
+    <!-- OpenSymphony Quartz -->
     <dependency>
       <groupId>opensymphony</groupId>
       <artifactId>quartz</artifactId>
