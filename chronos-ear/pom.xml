@@ -5,21 +5,21 @@
 
   <name>Chronos EAR packaging module</name>
 
-  <groupId>chronos.aggregator</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-ear</artifactId>
   <packaging>ear</packaging>
   <version>0.1-SNAPSHOT</version>
 
   <parent>
     <groupId>chronos</groupId>
-    <artifactId>aggregator</artifactId>
+    <artifactId>chronos</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
     <!-- chronos-core -->
     <dependency>
-      <groupId>chronos.aggregator</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
       <type>jar</type>
       <exclusions>
@@ -37,7 +37,7 @@
     </dependency>
     <!-- chronos-web -->
     <dependency>
-      <groupId>chronos.aggregator</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-web</artifactId>
       <type>war</type>
       <version>0.1-SNAPSHOT</version>
@@ -64,7 +64,7 @@
           <generateApplicationXml>false</generateApplicationXml>
           <modules>
             <jarModule>
-              <groupId>chronos.aggregator</groupId>
+              <groupId>chronos.chronos</groupId>
               <artifactId>chronos-core</artifactId>
               <bundleDir>/lib</bundleDir>
             </jarModule>

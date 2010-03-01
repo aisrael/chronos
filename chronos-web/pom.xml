@@ -5,13 +5,13 @@
 
   <name>Chronos Web</name>
 
-  <groupId>chronos.aggregator</groupId>
+  <groupId>chronos.chronos</groupId>
   <artifactId>chronos-web</artifactId>
   <packaging>war</packaging>
 
   <parent>
     <groupId>chronos</groupId>
-    <artifactId>aggregator</artifactId>
+    <artifactId>chronos</artifactId>
     <version>0.1-SNAPSHOT</version>
   </parent>
 
@@ -22,14 +22,14 @@
   <dependencies>
 
     <dependency>
-      <groupId>chronos.aggregator</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
       <version>0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     
     <dependency>
-      <groupId>chronos.aggregator</groupId>
+      <groupId>chronos.chronos</groupId>
       <artifactId>chronos-beans</artifactId>
       <version>0.1-SNAPSHOT</version>
       <type>ejb</type>

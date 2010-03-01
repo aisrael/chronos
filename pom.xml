@@ -6,7 +6,7 @@
   <name>Chronos aggregator project</name>
 
   <groupId>chronos</groupId>
-  <artifactId>aggregator</artifactId>
+  <artifactId>chronos</artifactId>
   <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
 
@@ -51,13 +51,13 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>chronos.aggregator</groupId>
+        <groupId>chronos.chronos</groupId>
         <artifactId>chronos-web</artifactId>
         <type>war</type>
         <version>0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>chronos.aggregator</groupId>
+        <groupId>chronos.chronos</groupId>
         <artifactId>chronos-beans</artifactId>
         <type>ejb</type>
         <version>0.1-SNAPSHOT</version>
