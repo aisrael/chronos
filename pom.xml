@@ -11,11 +11,14 @@
 
   <modules>
     <module>chronos-core</module>
-    <module>chronos-ejbs</module>
+    <module>chronos-beans</module>
     <module>chronos-web</module>
+    <module>chronos-ear</module>
   </modules>
 
   <properties>
+    <!-- The Quartz version to use for all modules -->
+    <quartz.version>1.7.3</quartz.version>
     <!-- Use UTF-8 as the default source encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -49,22 +52,24 @@
       <dependency>
         <groupId>chronos</groupId>
         <artifactId>chronos-core</artifactId>
+        <type>jar</type>
         <version>0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>chronos</groupId>
-        <artifactId>chronos-ejbs</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <artifactId>chronos-beans</artifactId>
         <type>ejb</type>
+        <version>0.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>chronos</groupId>
         <artifactId>chronos-web</artifactId>
-        <version>0.1-SNAPSHOT</version>
         <type>war</type>
+        <version>0.1-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <distributionManagement>
     <site>
       <id>site</id>
@@ -72,4 +77,5 @@
       <url>scp://local.company.com/websites/project.company.com/</url>
     </site>
   </distributionManagement>
+
 </project>

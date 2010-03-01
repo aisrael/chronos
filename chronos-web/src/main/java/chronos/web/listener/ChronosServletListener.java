@@ -17,6 +17,8 @@
  */
 package chronos.web.listener;
 
+import static chronos.Chronos.CHRONOS;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -65,14 +67,14 @@ public final class ChronosServletListener implements ServletContextListener {
         logger.debug("Got " + servers.size() + " servers");
         for (final MBeanServer server : servers) {
             logger.debug(server.getDefaultDomain());
-            if ("Chronos".equals(server.getDefaultDomain())) {
+            if (CHRONOS.equals(server.getDefaultDomain())) {
                 logger.debug("Found existing MBeanServer for \"Chronos\"...");
                 return server;
             }
         }
 
         logger.debug("Creating new MBeanServer for \"Chronos\"...");
-        return MBeanServerFactory.createMBeanServer("Chronos");
+        return MBeanServerFactory.createMBeanServer(CHRONOS);
     }
 
     /**
@@ -89,7 +91,7 @@ public final class ChronosServletListener implements ServletContextListener {
                 if (scheduler != null) {
                     scheduler.start();
                     logger.debug("Quartz started up successfully");
-                    final String[] jobNames = scheduler.getJobNames("Chronos");
+                    final String[] jobNames = scheduler.getJobNames(CHRONOS);
                     logger.debug("Got " + jobNames.length + " job names under group \"Chronos\"");
                     for (final String jobName : jobNames) {
                         logger.debug(jobName);
@@ -114,7 +116,7 @@ public final class ChronosServletListener implements ServletContextListener {
      */
     private void initializeQuartzJob(final Scheduler scheduler) throws SchedulerException {
         try {
-            final JobDetail jobDetail = new JobDetail("TestJob", "Chronos", TestJob.class);
+            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, TestJob.class);
             final JobDataMap jobDataMap = jobDetail.getJobDataMap();
             jobDataMap.put(InitialContext.class.getName(), new InitialContext());
 
