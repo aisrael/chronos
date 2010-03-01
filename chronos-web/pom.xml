@@ -23,6 +23,13 @@
 
     <dependency>
       <groupId>chronos.aggregator</groupId>
+      <artifactId>chronos-core</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>chronos.aggregator</groupId>
       <artifactId>chronos-beans</artifactId>
       <version>1.0</version>
       <type>ejb</type>
