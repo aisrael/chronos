@@ -5,16 +5,16 @@
 
   <parent>
     <groupId>chronos</groupId>
-    <artifactId>chronos</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <artifactId>aggregator</artifactId>
+    <version>1.0</version>
   </parent>
 
   <name>Chronos core classes</name>
 
-  <groupId>chronos.chronos</groupId>
+  <groupId>chronos.aggregator</groupId>
   <artifactId>chronos-core</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>1.0</version>
 
   <dependencies>
     <dependency>

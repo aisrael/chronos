@@ -3,23 +3,23 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>chronos</groupId>
-    <artifactId>chronos</artifactId>
-    <version>0.1-SNAPSHOT</version>
-  </parent>
+  <name>Chronos EAR packaging module</name>
 
-  <name>Chronos EAR aggregator module</name>
-
-  <groupId>chronos.chronos</groupId>
+  <groupId>chronos.aggregator</groupId>
   <artifactId>chronos-ear</artifactId>
   <packaging>ear</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>1.0</version>
+
+  <parent>
+    <groupId>chronos</groupId>
+    <artifactId>aggregator</artifactId>
+    <version>1.0</version>
+  </parent>
 
   <dependencies>
     <!-- chronos-core -->
     <dependency>
-      <groupId>chronos.chronos</groupId>
+      <groupId>chronos.aggregator</groupId>
       <artifactId>chronos-core</artifactId>
       <type>jar</type>
       <exclusions>
@@ -32,15 +32,15 @@
           <artifactId>ant-launcher</artifactId>
         </exclusion>
       </exclusions>
-      <version>0.1-SNAPSHOT</version>
+      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <!-- chronos-web -->
     <dependency>
-      <groupId>chronos.chronos</groupId>
+      <groupId>chronos.aggregator</groupId>
       <artifactId>chronos-web</artifactId>
       <type>war</type>
-      <version>0.1-SNAPSHOT</version>
+      <version>1.0</version>
     </dependency>
   </dependencies>
 
@@ -64,7 +64,7 @@
           <generateApplicationXml>false</generateApplicationXml>
           <modules>
             <jarModule>
-              <groupId>chronos.chronos</groupId>
+              <groupId>chronos.aggregator</groupId>
               <artifactId>chronos-core</artifactId>
               <bundleDir>/lib</bundleDir>
             </jarModule>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -5,9 +6,9 @@
   <name>Chronos aggregator project</name>
 
   <groupId>chronos</groupId>
-  <artifactId>chronos</artifactId>
+  <artifactId>aggregator</artifactId>
   <packaging>pom</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>1.0</version>
 
   <modules>
     <module>chronos-core</module>
@@ -50,32 +51,18 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>chronos.chronos</groupId>
-        <artifactId>chronos-core</artifactId>
-        <type>jar</type>
-        <version>0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>chronos.chronos</groupId>
-        <artifactId>chronos-beans</artifactId>
-        <type>ejb</type>
-        <version>0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>chronos.chronos</groupId>
+        <groupId>chronos.aggregator</groupId>
         <artifactId>chronos-web</artifactId>
         <type>war</type>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>chronos.aggregator</groupId>
+        <artifactId>chronos-beans</artifactId>
+        <type>ejb</type>
+        <version>1.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <distributionManagement>
-    <site>
-      <id>site</id>
-      <name>project website</name>
-      <url>scp://local.company.com/websites/project.company.com/</url>
-    </site>
-  </distributionManagement>
 
 </project>
