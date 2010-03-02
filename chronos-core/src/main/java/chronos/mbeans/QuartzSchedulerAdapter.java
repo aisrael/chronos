@@ -67,7 +67,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                     logger.debug("Using default Quartz configuration");
                     factory.initialize();
                 }
-                final Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+                final Scheduler scheduler = factory.getScheduler();
                 if (schedulerRef.compareAndSet(null, scheduler)) {
                     logger.debug("Quartz scheduler successfully created. Starting...");
                     try {

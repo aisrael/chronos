@@ -17,7 +17,6 @@
   </parent>
 
   <dependencies>
-<!--
     <dependency>
       <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
@@ -25,7 +24,14 @@
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
--->
+
+    <!-- JavaEE 5.0 -->
+    <dependency>
+      <groupId>javaee</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
