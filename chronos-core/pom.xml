@@ -17,6 +17,21 @@
   <version>0.1-SNAPSHOT</version>
 
   <dependencies>
+    <!-- OpenSymphony Quartz -->
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
+    </dependency>
+
+    <!-- Commons logging -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

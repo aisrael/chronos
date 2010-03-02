@@ -22,8 +22,16 @@ import static chronos.Chronos.CHRONOS;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
@@ -36,7 +44,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
-import org.quartz.impl.DirectSchedulerFactory;
+import chronos.mbeans.QuartzSchedulerAdapter;
 
 /**
  * @author Alistair A. Israel
@@ -65,16 +73,14 @@ public final class ChronosServletListener implements ServletContextListener {
     private MBeanServer findOrCreateChronosMBeanServer() {
         final ArrayList<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
         logger.debug("Got " + servers.size() + " servers");
-        for (final MBeanServer server : servers) {
-            logger.debug(server.getDefaultDomain());
-            if (CHRONOS.equals(server.getDefaultDomain())) {
-                logger.debug("Found existing MBeanServer for \"Chronos\"...");
-                return server;
-            }
+        if (servers.size() == 0) {
+            logger.debug("Creating new MBeanServer for \"chronos\"...");
+            return MBeanServerFactory.createMBeanServer(CHRONOS);
         }
 
-        logger.debug("Creating new MBeanServer for \"Chronos\"...");
-        return MBeanServerFactory.createMBeanServer(CHRONOS);
+        final MBeanServer server = servers.get(0);
+        logger.debug("Returning MBeanServer domain: " + server.getDefaultDomain());
+        return server;
     }
 
     /**
@@ -82,29 +88,31 @@ public final class ChronosServletListener implements ServletContextListener {
      *        the MBeanServer
      */
     private void initializeQuartzScheduler(final MBeanServer mbeanServer) {
-        logger.debug("Creating and starting up Quartz scheduler...");
         try {
-            final DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
-            if (factory != null) {
-                factory.createVolatileScheduler(8);
-                final Scheduler scheduler = factory.getScheduler();
-                if (scheduler != null) {
-                    scheduler.start();
-                    logger.debug("Quartz started up successfully");
-                    final String[] jobNames = scheduler.getJobNames(CHRONOS);
-                    logger.debug("Got " + jobNames.length + " job names under group \"Chronos\"");
-                    for (final String jobName : jobNames) {
-                        logger.debug(jobName);
-                    }
-                    initializeQuartzJob(scheduler);
-                } else {
-                    logger.warn("DirectSchedulerFactory.getScheduler()" + " returned null!");
-                }
-            } else {
-                logger.warn("DirectSchedulerFactory.getInstance()" + " returned null!");
-            }
-        } catch (final SchedulerException e) {
-            logger.error("Initializing Quartz scheduler failed: " + e.getMessage(), e);
+            final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
+            logger.debug("Creating and registering QuartzSchedulerAdapter MBean...");
+            final QuartzSchedulerAdapter quartzSchedulerAdapter = new QuartzSchedulerAdapter();
+            mbeanServer.registerMBean(quartzSchedulerAdapter, objectName);
+
+            logger.debug("Invoking start() on QuartzSchedulerAdapter MBean...");
+            mbeanServer.invoke(objectName, "start", null, null);
+
+        } catch (final MalformedObjectNameException e) {
+            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final NullPointerException e) {
+            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final InstanceAlreadyExistsException e) {
+            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final MBeanRegistrationException e) {
+            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final NotCompliantMBeanException e) {
+            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final InstanceNotFoundException e) {
+            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final ReflectionException e) {
+            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final MBeanException e) {
+            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         }
     }
 
@@ -137,24 +145,27 @@ public final class ChronosServletListener implements ServletContextListener {
      */
     public void contextDestroyed(final ServletContextEvent event) {
         logger.debug("Chronos is shutting down...");
-        logger.debug("Shutting down Quartz...");
+        final MBeanServer mbeanServer = findOrCreateChronosMBeanServer();
         try {
-            final DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
-            if (factory != null) {
-                final Scheduler scheduler = factory.getScheduler();
-                if (scheduler != null) {
-                    scheduler.shutdown();
-                    logger.info("Quartz shutdown successfully");
-                } else {
-                    logger.warn("DirectSchedulerFactory.getScheduler()" + " returned null!");
-                }
-            } else {
-                logger.warn("DirectSchedulerFactory.getInstance()" + " returned null!");
-            }
-        } catch (final SchedulerException e) {
-            logger.error("Encountered exception shutting down Quartz: " + e.getMessage(), e);
+            final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
+
+            logger.debug("Invoking shutdown() on QuartzSchedulerAdapter...");
+            mbeanServer.invoke(objectName, "shutdown", null, null);
+
+            logger.debug("Unregistering QuartzSchedulerAdapter Mbean");
+            mbeanServer.unregisterMBean(objectName);
+        } catch (final MalformedObjectNameException e) {
+            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final NullPointerException e) {
+            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final InstanceNotFoundException e) {
+            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final ReflectionException e) {
+            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+        } catch (final MBeanException e) {
+            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         }
-        logger.info("Chronos has shutdown");
+        logger.info("Chronos shutdown");
     }
 
 }

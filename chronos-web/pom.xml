@@ -43,9 +43,7 @@
       <version>${quartz.version}</version>
     </dependency>
 
-    <!--
-      Commons logging
-    -->
+    <!-- Commons logging -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
