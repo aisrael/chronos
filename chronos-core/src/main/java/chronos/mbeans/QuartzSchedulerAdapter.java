@@ -23,7 +23,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#getQuartzVersion()
      */
     @Override
@@ -32,9 +32,13 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                 + QuartzScheduler.getVersionIteration();
     }
 
+    public boolean isQuartzRunning() {
+        return schedulerRef.get() != null;
+    }
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#start()
      */
     @Override
@@ -66,7 +70,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#shutdown()
      */
     @Override

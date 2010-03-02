@@ -14,6 +14,11 @@ public interface QuartzSchedulerAdapterMBean {
     String getQuartzVersion();
 
     /**
+     * @return {@code true} if Quartz is running
+     */
+    boolean isQuartzRunning();
+
+    /**
      *
      */
     void start();
