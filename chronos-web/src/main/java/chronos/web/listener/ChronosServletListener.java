@@ -98,19 +98,25 @@ public final class ChronosServletListener implements ServletContextListener {
      */
     public void contextDestroyed(final ServletContextEvent event) {
         logger.debug("Chronos is shutting down...");
-        final MBeanServer mbeanServer = findOrCreateChronosMBeanServer();
-        try {
-            final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
+        final ArrayList<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
+        logger.debug("Got " + servers.size() + " servers");
+        if (servers.size() != 0) {
+            final MBeanServer mbeanServer = servers.get(0);
+            try {
+                final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
 
-            logger.debug("Invoking shutdown() on QuartzSchedulerAdapter...");
-            mbeanServer.invoke(objectName, "shutdown", null, null);
+                logger.debug("Invoking shutdown() on QuartzSchedulerAdapter...");
+                mbeanServer.invoke(objectName, "shutdown", null, null);
 
-            logger.debug("Unregistering QuartzSchedulerAdapter Mbean");
-            mbeanServer.unregisterMBean(objectName);
-        } catch (final JMException e) {
-            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final NullPointerException e) {
-            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+                logger.debug("Unregistering QuartzSchedulerAdapter Mbean");
+                mbeanServer.unregisterMBean(objectName);
+            } catch (final JMException e) {
+                logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+            } catch (final NullPointerException e) {
+                logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+            }
+        } else {
+            logger.warn("Unable to find MBeanServer!");
         }
         logger.info("Chronos shutdown");
     }
