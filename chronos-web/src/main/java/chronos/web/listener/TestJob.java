@@ -17,6 +17,10 @@
  */
 package chronos.web.listener;
 
+import static chronos.Chronos.CHRONOS;
+
+import java.util.Date;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -24,9 +28,15 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
+import org.quartz.Trigger;
+import org.quartz.TriggerUtils;
 
 /**
  * @author Alistair A. Israel
@@ -85,6 +95,28 @@ public class TestJob implements StatefulJob {
             }
         } catch (final NamingException e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @param scheduler
+     *        the {@link Scheduler}
+     * @throws SchedulerException
+     *         on exception
+     */
+    public final void initializeTestJob(final Scheduler scheduler) throws SchedulerException {
+        try {
+            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, TestJob.class);
+            final JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.put(InitialContext.class.getName(), new InitialContext());
+
+            final Trigger trigger = TriggerUtils.makeMinutelyTrigger();
+            trigger.setStartTime(TriggerUtils.getEvenMinuteDate(new Date()));
+            trigger.setName("TestTrigger");
+
+            scheduler.scheduleJob(jobDetail, trigger);
+        } catch (final NamingException e) {
+            logger.error("JNDI Exception: " + e.getMessage(), e);
         }
     }
 

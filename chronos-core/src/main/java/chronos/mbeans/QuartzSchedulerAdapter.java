@@ -23,7 +23,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#getQuartzVersion()
      */
     @Override
@@ -34,28 +34,39 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#start()
      */
     @Override
     public void start() {
-        final Scheduler scheduler = getOrCreateScheduler();
-        if (scheduler != null) {
-            logger.debug("Quartz scheduler starting...");
+        if (schedulerRef.get() == null) {
+            logger.debug("Creating new Quartz scheduler...");
             try {
-                scheduler.start();
-                logger.debug("Quartz started up successfully");
+                final DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
+                if (factory != null) {
+                    factory.createVolatileScheduler(Runtime.getRuntime().availableProcessors() + 2);
+                    final Scheduler scheduler = factory.getScheduler();
+                    if (schedulerRef.compareAndSet(null, scheduler)) {
+                        logger.debug("Quartz scheduler successfully created. Starting...");
+                        try {
+                            scheduler.start();
+                            logger.debug("Quartz started up successfully");
+                        } catch (final SchedulerException e) {
+                            logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                        }
+                    }
+                } else {
+                    logger.error("DirectSchedulerFactory.getInstance()" + " returned null!");
+                }
             } catch (final SchedulerException e) {
-                logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                logger.error("Initializing scheduler failed!: " + e.getMessage(), e);
             }
-        } else {
-            logger.debug("scheduler is null!");
         }
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#shutdown()
      */
     @Override
@@ -72,30 +83,5 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
         } else {
             logger.debug("scheduler is null!");
         }
-    }
-
-    /**
-     * @throws SchedulerException
-     */
-    private Scheduler getOrCreateScheduler() {
-        if (schedulerRef.get() == null) {
-            logger.debug("Creating new Quartz scheduler...");
-            try {
-                final DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
-                if (factory != null) {
-                    factory.createVolatileScheduler(Runtime.getRuntime().availableProcessors() + 2);
-                    final Scheduler scheduler = factory.getScheduler();
-                    if (schedulerRef.compareAndSet(null, scheduler)) {
-                        logger.debug("Successfully created Quartz scheduler!");
-                        return scheduler;
-                    }
-                } else {
-                    logger.error("DirectSchedulerFactory.getInstance()" + " returned null!");
-                }
-            } catch (final SchedulerException e) {
-                logger.error("Initializing scheduler failed!: " + e.getMessage(), e);
-            }
-        }
-        return schedulerRef.get();
     }
 }

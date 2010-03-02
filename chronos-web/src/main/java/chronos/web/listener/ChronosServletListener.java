@@ -20,30 +20,14 @@ package chronos.web.listener;
 import static chronos.Chronos.CHRONOS;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanRegistrationException;
+import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
 import chronos.mbeans.QuartzSchedulerAdapter;
 
 /**
@@ -95,46 +79,15 @@ public final class ChronosServletListener implements ServletContextListener {
             mbeanServer.registerMBean(quartzSchedulerAdapter, objectName);
 
             logger.debug("Invoking start() on QuartzSchedulerAdapter MBean...");
-            mbeanServer.invoke(objectName, "start", null, null);
-
-        } catch (final MalformedObjectNameException e) {
+            try {
+                mbeanServer.invoke(objectName, "start", null, null);
+            } catch (final JMException e) {
+                logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+            }
+        } catch (final JMException e) {
             logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         } catch (final NullPointerException e) {
             logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final InstanceAlreadyExistsException e) {
-            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final MBeanRegistrationException e) {
-            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final NotCompliantMBeanException e) {
-            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final InstanceNotFoundException e) {
-            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final ReflectionException e) {
-            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final MBeanException e) {
-            logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * @param scheduler
-     *        the {@link Scheduler}
-     * @throws SchedulerException
-     *         on exception
-     */
-    private void initializeQuartzJob(final Scheduler scheduler) throws SchedulerException {
-        try {
-            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, TestJob.class);
-            final JobDataMap jobDataMap = jobDetail.getJobDataMap();
-            jobDataMap.put(InitialContext.class.getName(), new InitialContext());
-
-            final Trigger trigger = TriggerUtils.makeMinutelyTrigger();
-            trigger.setStartTime(TriggerUtils.getEvenMinuteDate(new Date()));
-            trigger.setName("TestTrigger");
-
-            scheduler.scheduleJob(jobDetail, trigger);
-        } catch (final NamingException e) {
-            logger.error("JNDI Exception: " + e.getMessage(), e);
         }
     }
 
@@ -154,15 +107,9 @@ public final class ChronosServletListener implements ServletContextListener {
 
             logger.debug("Unregistering QuartzSchedulerAdapter Mbean");
             mbeanServer.unregisterMBean(objectName);
-        } catch (final MalformedObjectNameException e) {
+        } catch (final JMException e) {
             logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         } catch (final NullPointerException e) {
-            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final InstanceNotFoundException e) {
-            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final ReflectionException e) {
-            logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final MBeanException e) {
             logger.error("Shutting down QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         }
         logger.info("Chronos shutdown");
