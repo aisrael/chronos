@@ -38,6 +38,11 @@ public final class ChronosServletListener implements ServletContextListener {
     private static final Log logger = LogFactory.getLog(ChronosServletListener.class);
 
     /**
+     *
+     */
+    private static final String QUARTZ_SCHEDULER_ADAPTER = "QuartzSchedulerAdapter";
+
+    /**
      * {@inheritDoc}
      *
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
@@ -47,7 +52,7 @@ public final class ChronosServletListener implements ServletContextListener {
 
         final MBeanServer mbeanServer = findOrCreateChronosMBeanServer();
 
-        initializeQuartzScheduler(mbeanServer);
+        initializeQuartzSchedulerAdapter(mbeanServer);
         logger.info("Chronos started up");
     }
 
@@ -71,10 +76,12 @@ public final class ChronosServletListener implements ServletContextListener {
      * @param mbeanServer
      *        the MBeanServer
      */
-    private void initializeQuartzScheduler(final MBeanServer mbeanServer) {
+    private void initializeQuartzSchedulerAdapter(final MBeanServer mbeanServer) {
         try {
-            final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
             logger.debug("Creating and registering QuartzSchedulerAdapter MBean...");
+
+            final ObjectName objectName = new ObjectName(CHRONOS, "type", QUARTZ_SCHEDULER_ADAPTER);
+
             final QuartzSchedulerAdapter quartzSchedulerAdapter = new QuartzSchedulerAdapter();
             mbeanServer.registerMBean(quartzSchedulerAdapter, objectName);
 
@@ -82,11 +89,9 @@ public final class ChronosServletListener implements ServletContextListener {
             try {
                 mbeanServer.invoke(objectName, "start", null, null);
             } catch (final JMException e) {
-                logger.error("Invoking start() on QuartzSchedulerAdapter failed: " + e.getMessage(), e);
+                logger.error("QuartzSchedulerAdapter start() failed: " + e.getMessage(), e);
             }
         } catch (final JMException e) {
-            logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
-        } catch (final NullPointerException e) {
             logger.error("Registering QuartzSchedulerAdapter failed: " + e.getMessage(), e);
         }
     }
@@ -103,7 +108,7 @@ public final class ChronosServletListener implements ServletContextListener {
         if (servers.size() != 0) {
             final MBeanServer mbeanServer = servers.get(0);
             try {
-                final ObjectName objectName = new ObjectName(CHRONOS, "type", "QuartzSchedulerAdapter");
+                final ObjectName objectName = new ObjectName(CHRONOS, "type", QUARTZ_SCHEDULER_ADAPTER);
 
                 logger.debug("Invoking shutdown() on QuartzSchedulerAdapter...");
                 mbeanServer.invoke(objectName, "shutdown", null, null);
