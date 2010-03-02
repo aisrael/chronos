@@ -5,5 +5,6 @@
   version="2.5">
   <display-name>Chronos Web App</display-name>
   <listener>
-  <listener-class>chronos.web.listener.ChronosServletListener</listener-class></listener>
+    <listener-class>chronos.web.listener.ChronosServletListener</listener-class>
+  </listener>
 </web-app>

@@ -23,6 +23,12 @@
       <artifactId>chronos-core</artifactId>
       <type>jar</type>
       <version>0.1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <groupId>opensymphony</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- chronos-core -->
     <dependency>
@@ -38,6 +44,17 @@
       <type>war</type>
       <version>0.1-SNAPSHOT</version>
     </dependency>
+
+    <!--
+      Core utilities used by other modules. Define this if you use
+      Spring Utility APIs
+      (org.springframework.core.*/org.springframework.util.*)
+    -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -51,7 +68,15 @@
             <jarModule>
               <groupId>chronos.chronos</groupId>
               <artifactId>chronos-core</artifactId>
+              <includeInApplicationXml>true</includeInApplicationXml>
+              <!-- 
               <bundleDir>/lib</bundleDir>
+              -->
+            </jarModule>
+            <jarModule>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+              <includeInApplicationXml>true</includeInApplicationXml>
             </jarModule>
           </modules>
         </configuration>

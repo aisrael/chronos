@@ -3,6 +3,8 @@
  */
 package chronos.mbeans;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
@@ -10,7 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.core.QuartzScheduler;
-import org.quartz.impl.DirectSchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Alistair A. Israel
@@ -46,21 +49,33 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
         if (schedulerRef.get() == null) {
             logger.debug("Creating new Quartz scheduler...");
             try {
-                final DirectSchedulerFactory factory = DirectSchedulerFactory.getInstance();
-                if (factory != null) {
-                    factory.createVolatileScheduler(Runtime.getRuntime().availableProcessors() + 2);
-                    final Scheduler scheduler = factory.getScheduler();
-                    if (schedulerRef.compareAndSet(null, scheduler)) {
-                        logger.debug("Quartz scheduler successfully created. Starting...");
+                final StdSchedulerFactory factory = new StdSchedulerFactory();
+                final ClassPathResource resource = new ClassPathResource("quartz.properties");
+                if (resource.exists() && resource.isReadable()) {
+                    logger.debug("Configuring Quartz from resource: " + resource.getPath());
+                    try {
+                        final InputStream is = resource.getInputStream();
                         try {
-                            scheduler.start();
-                            logger.debug("Quartz started up successfully");
-                        } catch (final SchedulerException e) {
-                            logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                            factory.initialize(is);
+                        } finally {
+                            is.close();
                         }
+                    } catch (final IOException e) {
+                        logger.debug("Exception initializing from resource: " + e.getMessage(), e);
                     }
                 } else {
-                    logger.error("DirectSchedulerFactory.getInstance()" + " returned null!");
+                    logger.debug("Using default Quartz configuration");
+                    factory.initialize();
+                }
+                final Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+                if (schedulerRef.compareAndSet(null, scheduler)) {
+                    logger.debug("Quartz scheduler successfully created. Starting...");
+                    try {
+                        scheduler.start();
+                        logger.debug("Quartz started up successfully");
+                    } catch (final SchedulerException e) {
+                        logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                    }
                 }
             } catch (final SchedulerException e) {
                 logger.error("Initializing scheduler failed!: " + e.getMessage(), e);

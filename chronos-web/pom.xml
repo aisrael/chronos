@@ -15,10 +15,6 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <spring.version>3.0.0.RELEASE</spring.version>
-  </properties>
-
   <dependencies>
 
     <dependency>
@@ -27,20 +23,13 @@
       <version>0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>chronos.chronos</groupId>
       <artifactId>chronos-beans</artifactId>
       <version>0.1-SNAPSHOT</version>
       <type>ejb</type>
       <scope>provided</scope>
-    </dependency>
-    
-    <!-- OpenSymphony Quartz -->
-    <dependency>
-      <groupId>opensymphony</groupId>
-      <artifactId>quartz</artifactId>
-      <version>${quartz.version}</version>
     </dependency>
 
     <!-- Commons logging -->
@@ -72,29 +61,19 @@
   </dependencies>
   <build>
     <plugins>
-      <!-- Configure the Maven Checkstyle plugin
-      <plugin>
+      <!--
+        Configure the Maven Checkstyle plugin <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>${project.basedir}/etc/checkstyle.xml</configLocation>
-          <consoleOutput>true</consoleOutput>
-          <propertyExpansion>config_loc=${project.basedir}/etc</propertyExpansion>
-          <failsOnError>true</failsOnError>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <failOnViolation>true</failOnViolation>
-              <violationSeverity>warning</violationSeverity>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId> <configuration>
+        <configLocation>${project.basedir}/etc/checkstyle.xml</configLocation>
+        <consoleOutput>true</consoleOutput>
+        <propertyExpansion>config_loc=${project.basedir}/etc</propertyExpansion>
+        <failsOnError>true</failsOnError> </configuration> <executions>
+        <execution> <phase>process-sources</phase> <goals>
+        <goal>check</goal> </goals> <configuration>
+        <failOnViolation>true</failOnViolation>
+        <violationSeverity>warning</violationSeverity> </configuration>
+        </execution> </executions> </plugin>
       -->
     </plugins>
     <resources>
