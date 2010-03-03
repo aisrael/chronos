@@ -76,6 +76,8 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                     } catch (final SchedulerException e) {
                         logger.error("Scheduler start() failed!: " + e.getMessage(), e);
                     }
+                } else {
+                    logger.warn("Tried to set schedulerRef, expecting null but was already set!");
                 }
             } catch (final SchedulerException e) {
                 logger.error("Initializing scheduler failed!: " + e.getMessage(), e);
@@ -95,7 +97,10 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
             logger.debug("Quartz scheduler shutting down...");
             try {
                 scheduler.shutdown();
-                schedulerRef.compareAndSet(scheduler, null);
+                final boolean nulled = schedulerRef.compareAndSet(scheduler, null);
+                if (!nulled) {
+                    logger.warn("Tried to set schedulerRef to null but was set to a different value!");
+                }
             } catch (final SchedulerException e) {
                 logger.error("Encountered exception shutting down Quartz: " + e.getMessage(), e);
             }
