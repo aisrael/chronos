@@ -38,6 +38,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Freemarker (for MVC view) -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>2.3.16</version>
+    </dependency>
+
     <!--
       Core utilities used by other modules. Define this if you use
       Spring Utility APIs
