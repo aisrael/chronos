@@ -21,7 +21,7 @@
     <!-- The Quartz version to use for all modules -->
     <quartz.version>1.7.3</quartz.version>
     <!-- The Spring framework version to use for all modules -->
-    <spring.version>3.0.0.RELEASE</spring.version>
+    <spring.version>3.0.1.RELEASE</spring.version>
     <!-- Use UTF-8 as the default source encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

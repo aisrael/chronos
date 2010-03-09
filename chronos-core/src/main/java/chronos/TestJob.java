@@ -15,7 +15,7 @@
  *
  * Created Feb 1, 2010
  */
-package chronos.web.listener;
+package chronos;
 
 import static chronos.Chronos.CHRONOS;
 
