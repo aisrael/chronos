@@ -28,6 +28,11 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
+
+import chronos.TestJob;
 import chronos.mbeans.QuartzSchedulerAdapter;
 
 /**
@@ -84,6 +89,15 @@ public final class ChronosServletListener implements ServletContextListener {
 
             final QuartzSchedulerAdapter quartzSchedulerAdapter = new QuartzSchedulerAdapter();
             mbeanServer.registerMBean(quartzSchedulerAdapter, objectName);
+
+            try {
+                final StdSchedulerFactory factory = new StdSchedulerFactory();
+                factory.initialize();
+                final Scheduler scheduler = factory.getScheduler();
+                TestJob.initializeTestJob(scheduler);
+            } catch (final SchedulerException e) {
+                logger.error(e.getMessage(), e);
+            }
 
             logger.debug("Invoking start() on QuartzSchedulerAdapter MBean...");
             try {

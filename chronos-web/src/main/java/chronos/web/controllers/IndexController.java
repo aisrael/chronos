@@ -19,7 +19,12 @@
 package chronos.web.controllers;
 
 import java.util.Date;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,13 +35,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
 
+    private static final Log logger = LogFactory.getLog(IndexController.class);
+
     /**
      * @param model
      *        {@link Model}
      */
     @RequestMapping("/index.html")
     public final void index(final Model model) {
+        try {
+            final StdSchedulerFactory factory = new StdSchedulerFactory();
+            factory.initialize();
+            final Scheduler scheduler = factory.getScheduler();
+            final String[] groupNames = scheduler.getJobGroupNames();
+            logger.debug("Got " + groupNames.length + " job group names");
+            for (final String groupName : groupNames) {
+                final String[] jobNames = scheduler.getJobNames(groupName);
+                logger.debug("Got " + jobNames.length + " job names under group \"" + groupName + "\"");
+                for (final String jobName : jobNames) {
+                    final JobDetail jobDetail = scheduler.getJobDetail(jobName, groupName);
+                    logger.debug(jobName + " (" + jobDetail.getJobClass().getName() + ")");
+                }
+            }
+        } catch (final SchedulerException e) {
+            logger.error(e.getMessage(), e);
+        }
         model.addAttribute("now", new Date());
     }
-
 }

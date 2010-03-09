@@ -104,7 +104,7 @@ public class TestJob implements StatefulJob {
      * @throws SchedulerException
      *         on exception
      */
-    public final void initializeTestJob(final Scheduler scheduler) throws SchedulerException {
+    public static final void initializeTestJob(final Scheduler scheduler) throws SchedulerException {
         try {
             final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, TestJob.class);
             final JobDataMap jobDataMap = jobDetail.getJobDataMap();
