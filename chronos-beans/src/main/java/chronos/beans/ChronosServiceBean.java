@@ -20,6 +20,9 @@ package chronos.beans;
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import chronos.ChronosService;
 
 /**
@@ -28,11 +31,13 @@ import chronos.ChronosService;
 @Stateless(mappedName = ChronosService.JNDI_NAME)
 public class ChronosServiceBean implements ChronosService {
 
+    private static final Log logger = LogFactory.getLog(ChronosServiceBean.class);
+
     /**
      * Called by the J2EE container after EJB construction.
      */
     @PostConstruct
-    private final void postConstruct() {
-
+    public final void postConstruct() {
+        logger.debug("ChronosServiceBean@" + System.identityHashCode(this) + "#postConstruct()...");
     }
 }
