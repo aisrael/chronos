@@ -29,6 +29,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import freemarker.template.SimpleHash;
+import freemarker.template.SimpleSequence;
+
 /**
  * @author Alistair A. Israel
  */
@@ -43,23 +46,35 @@ public class IndexController {
      */
     @RequestMapping("/index.html")
     public final void index(final Model model) {
+        model.addAttribute("now", new Date());
         try {
             final StdSchedulerFactory factory = new StdSchedulerFactory();
             factory.initialize();
             final Scheduler scheduler = factory.getScheduler();
             final String[] groupNames = scheduler.getJobGroupNames();
+            final SimpleSequence groups = new SimpleSequence();
             logger.debug("Got " + groupNames.length + " job group names");
             for (final String groupName : groupNames) {
+                final SimpleSequence jobs = new SimpleSequence();
                 final String[] jobNames = scheduler.getJobNames(groupName);
                 logger.debug("Got " + jobNames.length + " job names under group \"" + groupName + "\"");
                 for (final String jobName : jobNames) {
                     final JobDetail jobDetail = scheduler.getJobDetail(jobName, groupName);
-                    logger.debug(jobName + " (" + jobDetail.getJobClass().getName() + ")");
+                    final String jobClassName = jobDetail.getJobClass().getName();
+                    logger.debug(jobName + " (" + jobClassName + ")");
+                    final SimpleHash job = new SimpleHash();
+                    job.put("name", jobName);
+                    job.put("class", jobClassName);
+                    jobs.add(job);
                 }
+                final SimpleHash group = new SimpleHash();
+                group.put("name", groupName);
+                group.put("jobs", jobs);
+                groups.add(group);
             }
+            model.addAttribute("groups", groups);
         } catch (final SchedulerException e) {
             logger.error(e.getMessage(), e);
         }
-        model.addAttribute("now", new Date());
     }
 }
