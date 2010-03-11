@@ -106,7 +106,8 @@ public class TestJob implements StatefulJob {
      */
     public static final void initializeTestJob(final Scheduler scheduler) throws SchedulerException {
         try {
-            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, TestJob.class);
+            final Class<?> clazz = Class.forName(TestJob.class.getName());
+            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, clazz);
             final JobDataMap jobDataMap = jobDetail.getJobDataMap();
             jobDataMap.put(InitialContext.class.getName(), new InitialContext());
 
@@ -117,6 +118,8 @@ public class TestJob implements StatefulJob {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (final NamingException e) {
             logger.error("JNDI Exception: " + e.getMessage(), e);
+        } catch (final ClassNotFoundException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
