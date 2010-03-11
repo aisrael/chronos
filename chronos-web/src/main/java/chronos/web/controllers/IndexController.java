@@ -69,12 +69,12 @@ public class IndexController {
      *         on exception
      */
     private SimpleSequence extractJobGroups(final Scheduler scheduler) throws SchedulerException {
-        final SimpleSequence groups = new SimpleSequence();
         final String[] groupNames = scheduler.getJobGroupNames();
         logger.debug("Got " + groupNames.length + " job group names");
+        final SimpleSequence groups = new SimpleSequence(groupNames.length);
         for (final String groupName : groupNames) {
-            final SimpleSequence jobs = new SimpleSequence();
             final String[] jobNames = scheduler.getJobNames(groupName);
+            final SimpleSequence jobs = new SimpleSequence(jobNames.length);
             logger.debug("Got " + jobNames.length + " job names under group \"" + groupName + "\"");
             for (final String jobName : jobNames) {
                 final JobDetail jobDetail = scheduler.getJobDetail(jobName, groupName);
@@ -83,7 +83,12 @@ public class IndexController {
                 final SimpleHash job = new SimpleHash();
                 job.put("name", jobName);
                 job.put("class", jobClassName);
-
+                final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, groupName);
+                final SimpleSequence triggerNames = new SimpleSequence(triggersOfJob.length);
+                for (final Trigger trigger : triggersOfJob) {
+                    triggerNames.add(trigger.getName());
+                }
+                job.put("triggerNames", triggerNames);
                 jobs.add(job);
             }
             final SimpleHash group = new SimpleHash();
@@ -102,13 +107,13 @@ public class IndexController {
      *         on exception
      */
     private SimpleSequence extractTriggers(final Scheduler scheduler) throws SchedulerException {
-        final SimpleSequence groups = new SimpleSequence();
         final String[] groupNames = scheduler.getTriggerGroupNames();
         logger.debug("Got " + groupNames.length + " trigger group names");
+        final SimpleSequence groups = new SimpleSequence(groupNames.length);
         for (final String groupName : groupNames) {
-            final SimpleSequence triggers = new SimpleSequence();
             final String[] triggerNames = scheduler.getTriggerNames(groupName);
             logger.debug("Got " + triggerNames.length + " trigger names under group \"" + groupName + "\"");
+            final SimpleSequence triggers = new SimpleSequence(triggerNames.length);
             for (final String triggerName : triggerNames) {
                 final SimpleHash triggerHash = new SimpleHash();
                 final Trigger trigger = scheduler.getTrigger(triggerName, groupName);
