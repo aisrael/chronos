@@ -11,7 +11,7 @@
 <dd>
 <ul>
 <#list group.jobs as job>
-<li>${job.name} (${job.class})</li>
+<li>${job.name} (${job.class}) : ${job.triggerNames}</li>
 </#list>
 </ul>
 </dd>

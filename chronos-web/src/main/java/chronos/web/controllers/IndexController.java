@@ -18,7 +18,12 @@
 
 package chronos.web.controllers;
 
+import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronTrigger;
@@ -84,11 +89,11 @@ public class IndexController {
                 job.put("name", jobName);
                 job.put("class", jobClassName);
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, groupName);
-                final SimpleSequence triggerNames = new SimpleSequence(triggersOfJob.length);
+                final List<String> triggerNames = new ArrayList<String>(triggersOfJob.length);
                 for (final Trigger trigger : triggersOfJob) {
                     triggerNames.add(trigger.getName());
                 }
-                job.put("triggerNames", triggerNames);
+                job.put("triggerNames", collectionToCommaDelimitedString(triggerNames));
                 jobs.add(job);
             }
             final SimpleHash group = new SimpleHash();
