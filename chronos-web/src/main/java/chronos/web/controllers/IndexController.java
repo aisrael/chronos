@@ -84,7 +84,6 @@ public class IndexController {
             for (final String jobName : jobNames) {
                 final JobDetail jobDetail = scheduler.getJobDetail(jobName, groupName);
                 final String jobClassName = jobDetail.getJobClass().getName();
-                logger.debug(jobName + " (" + jobClassName + ")");
                 final SimpleHash job = new SimpleHash();
                 job.put("name", jobName);
                 job.put("class", jobClassName);
@@ -95,6 +94,8 @@ public class IndexController {
                 }
                 job.put("triggerNames", collectionToCommaDelimitedString(triggerNames));
                 jobs.add(job);
+
+                logger.debug(jobName + " (" + jobClassName + ") : " + triggerNames);
             }
             final SimpleHash group = new SimpleHash();
             group.put("name", groupName);
