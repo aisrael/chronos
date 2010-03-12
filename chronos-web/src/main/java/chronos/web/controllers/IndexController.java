@@ -37,6 +37,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import chronos.utils.time.Period;
+
 import freemarker.template.SimpleHash;
 import freemarker.template.SimpleSequence;
 
@@ -138,7 +140,8 @@ public class IndexController {
                         } else {
                             description = description + repeatCount + " times";
                         }
-                        description = description + " every " + simpleTrigger.getRepeatInterval() + " ms";
+                        final Period period = Period.humanize(simpleTrigger.getRepeatInterval());
+                        description = description + " every " + period;
                     }
                 } else if (trigger instanceof CronTrigger) {
                     final CronTrigger cronTrigger = (CronTrigger) trigger;

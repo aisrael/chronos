@@ -15,25 +15,47 @@
  *
  * Created Mar 12, 2010
  */
-package chronos;
+package chronos.utils.time;
 
 /**
- * Just a utility class to hold various constants.
- *
  * @author Alistair A. Israel
  */
-public abstract class Chronos {
+public final class TimeConstants {
 
     /**
-     * {@value #CHRONOS}
+     * {@value #MILLIS_PER_SECOND}
      */
-    public static final String CHRONOS = "chronos";
+    public static final int MILLIS_PER_SECOND = 1000;
 
     /**
-     * Utility classes should not have a public or default constructor.
+     * {@value #SECONDS_PER_MINUTE}
      */
-    private Chronos() {
+    public static final int SECONDS_PER_MINUTE = 60;
+
+    /**
+     * {@value #MINUTES_PER_HOUR}
+     */
+    public static final int MINUTES_PER_HOUR = 60;
+
+    /**
+     * {@value #HOURS_PER_DAY}
+     */
+    public static final int HOURS_PER_DAY = 24;
+
+    /**
+     * {@value #DAYS_PER_WEEK}
+     */
+    public static final int DAYS_PER_WEEK = 7;
+
+    /**
+     * {@value #DAYS_PER_YEAR}
+     */
+    public static final int DAYS_PER_YEAR = 365;
+
+    /**
+     *
+     */
+    private TimeConstants() {
         // noop
     }
-
 }

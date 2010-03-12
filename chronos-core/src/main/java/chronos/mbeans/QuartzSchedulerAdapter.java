@@ -1,5 +1,19 @@
 /**
+ * Copyright (c) 2009-2010 Alistair A. Israel
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Created Mar 12, 2010
  */
 package chronos.mbeans;
 
@@ -30,12 +44,17 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#getQuartzVersion()
      */
     @Override
-    public String getQuartzVersion() {
+    public final String getQuartzVersion() {
         return QuartzScheduler.getVersionMajor() + "." + QuartzScheduler.getVersionMinor() + "."
                 + QuartzScheduler.getVersionIteration();
     }
 
-    public boolean isQuartzRunning() {
+    /**
+     * {@inheritDoc}
+     *
+     * @see chronos.mbeans.QuartzSchedulerAdapterMBean#isQuartzRunning()
+     */
+    public final boolean isQuartzRunning() {
         return schedulerRef.get() != null;
     }
 
@@ -45,7 +64,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#start()
      */
     @Override
-    public void start() {
+    public final void start() {
         if (schedulerRef.get() == null) {
             logger.debug("Creating new Quartz scheduler...");
             try {
@@ -91,7 +110,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
      * @see chronos.mbeans.QuartzSchedulerAdapterMBean#shutdown()
      */
     @Override
-    public void shutdown() {
+    public final void shutdown() {
         final Scheduler scheduler = schedulerRef.get();
         if (scheduler != null) {
             logger.debug("Quartz scheduler shutting down...");
