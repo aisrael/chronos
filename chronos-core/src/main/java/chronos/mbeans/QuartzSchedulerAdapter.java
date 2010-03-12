@@ -161,7 +161,8 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
                 for (final Trigger trigger : triggersOfJob) {
-                    logger.debug("Unscheduling trigger " + trigger.getGroup() + ":" + trigger.getName());
+                    logger.debug("Unscheduling trigger " + trigger.getFullName() + "("
+                            + trigger.getFullJobName() + ")");
                     scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
                 }
                 final String[] jobGroupNames = scheduler.getJobGroupNames();
