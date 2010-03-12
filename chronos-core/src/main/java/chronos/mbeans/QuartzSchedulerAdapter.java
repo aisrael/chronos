@@ -17,8 +17,6 @@
  */
 package chronos.mbeans;
 
-import static chronos.Chronos.CHRONOS;
-import static chronos.TestJob.TEST_JOB_NAME;
 import static org.quartz.core.QuartzSchedulerResources.getUniqueIdentifier;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME;
 import static org.quartz.impl.StdSchedulerFactory.PROP_THREAD_POOL_CLASS;
@@ -32,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.Trigger;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.simpl.SimpleThreadPool;
@@ -40,6 +37,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 
 import chronos.Chronos;
+import chronos.TestJob;
 
 /**
  * @author Alistair A. Israel
@@ -158,13 +156,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                 logger.trace("Got scheduler "
                         + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
                                 .getSchedulerInstanceId()));
-
-                final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
-                for (final Trigger trigger : triggersOfJob) {
-                    logger.debug("Unscheduling trigger " + trigger.getFullName() + "("
-                            + trigger.getFullJobName() + ")");
-                    scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
-                }
+                TestJob.unschedule(scheduler);
                 final String[] jobGroupNames = scheduler.getJobGroupNames();
                 if (schedulerInstanceName.equals(scheduler.getSchedulerName())) {
                     if (jobGroupNames.length == 0) {

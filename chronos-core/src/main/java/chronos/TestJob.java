@@ -18,7 +18,6 @@
 package chronos;
 
 import static chronos.Chronos.CHRONOS;
-
 import java.util.Date;
 
 import javax.naming.Context;
@@ -110,4 +109,20 @@ public class TestJob implements StatefulJob {
         }
     }
 
+    /**
+     * @param scheduler
+     *        the {@link Scheduler}
+     */
+    public static void unschedule(final Scheduler scheduler) {
+        try {
+            final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
+            for (final Trigger trigger : triggersOfJob) {
+                logger.debug("Unscheduling trigger " + trigger.getFullName() + " ("
+                        + trigger.getFullJobName() + ")");
+                scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
+            }
+        } catch (final SchedulerException e) {
+            logger.error("SchedulerException unscheduling " + TEST_JOB_NAME + ": " + e.getMessage(), e);
+        }
+    }
 }
