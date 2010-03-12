@@ -19,9 +19,12 @@ package chronos.mbeans;
 
 import static chronos.Chronos.CHRONOS;
 import static chronos.TestJob.TEST_JOB_NAME;
+import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME;
+import static org.quartz.impl.StdSchedulerFactory.PROP_THREAD_POOL_CLASS;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
@@ -31,8 +34,11 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.simpl.SimpleThreadPool;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
+
+import chronos.Chronos;
 
 /**
  * @author Alistair A. Israel
@@ -40,6 +46,8 @@ import org.springframework.util.StringUtils;
 public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
 
     private static final Log logger = LogFactory.getLog(QuartzSchedulerAdapter.class);
+
+    private final String schedulerInstanceName = Chronos.CHRONOS + "." + System.identityHashCode(this);
 
     private final AtomicReference<Scheduler> schedulerRef = new AtomicReference<Scheduler>();
 
@@ -71,41 +79,67 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
     @Override
     public final void start() {
         if (schedulerRef.get() == null) {
-            logger.debug("Creating new Quartz scheduler...");
+            final StdSchedulerFactory factory = new StdSchedulerFactory();
             try {
-                final StdSchedulerFactory factory = new StdSchedulerFactory();
-                final ClassPathResource resource = new ClassPathResource("quartz.properties");
-                if (resource.exists() && resource.isReadable()) {
-                    logger.debug("Configuring Quartz from resource: " + resource.getPath());
-                    try {
-                        final InputStream is = resource.getInputStream();
-                        try {
-                            factory.initialize(is);
-                        } finally {
-                            is.close();
-                        }
-                    } catch (final IOException e) {
-                        logger.debug("Exception initializing from resource: " + e.getMessage(), e);
-                    }
+                final boolean createOwnScheduler = factory.getAllSchedulers().size() == 0;
+                if (createOwnScheduler) {
+                    createOwnScheduler(factory);
                 } else {
-                    logger.debug("Using default Quartz configuration");
-                    factory.initialize();
+                    logger.debug("Using existing scheduler instance");
                 }
                 final Scheduler scheduler = factory.getScheduler();
-                if (schedulerRef.compareAndSet(null, scheduler)) {
-                    logger.debug("Quartz scheduler successfully created. Starting...");
-                    try {
-                        scheduler.start();
-                        logger.debug("Quartz started up successfully");
-                    } catch (final SchedulerException e) {
-                        logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                if (null != scheduler) {
+                    logger.trace("Got scheduler " + scheduler.getSchedulerName() + " ("
+                            + scheduler.getSchedulerInstanceId() + ")");
+                    if (schedulerRef.compareAndSet(null, scheduler)) {
+                        if (createOwnScheduler) {
+                            logger.debug("Quartz scheduler successfully created. Starting...");
+                            try {
+                                scheduler.start();
+                                logger.debug("Quartz started up successfully");
+                            } catch (final SchedulerException e) {
+                                logger.error("Scheduler start() failed!: " + e.getMessage(), e);
+                            }
+                        }
+                    } else {
+                        logger.warn("Tried to set schedulerRef, expecting null but was already set!");
                     }
                 } else {
-                    logger.warn("Tried to set schedulerRef, expecting null but was already set!");
+                    logger.error("factory.getScheduler() returned null!");
                 }
             } catch (final SchedulerException e) {
                 logger.error("Initializing scheduler failed!: " + e.getMessage(), e);
             }
+        }
+    }
+
+    /**
+     * @param factory
+     *        {@link StdSchedulerFactory}
+     * @throws SchedulerException
+     *         on exception
+     */
+    private void createOwnScheduler(final StdSchedulerFactory factory) throws SchedulerException {
+        logger.debug("Creating new Quartz scheduler...");
+        final ClassPathResource resource = new ClassPathResource("quartz.properties");
+        if (resource.exists() && resource.isReadable()) {
+            logger.debug("Configuring Quartz from resource: " + resource.getPath());
+            try {
+                final InputStream is = resource.getInputStream();
+                try {
+                    factory.initialize(is);
+                } finally {
+                    is.close();
+                }
+            } catch (final IOException e) {
+                logger.debug("Exception initializing from resource: " + e.getMessage(), e);
+            }
+        } else {
+            logger.debug("Using minimal default properties");
+            final Properties props = new Properties();
+            props.put(PROP_SCHED_INSTANCE_NAME, schedulerInstanceName);
+            props.put(PROP_THREAD_POOL_CLASS, SimpleThreadPool.class.getName());
+            factory.initialize(props);
         }
     }
 
@@ -119,18 +153,28 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
         final Scheduler scheduler = schedulerRef.get();
         if (scheduler != null) {
             try {
+                logger.trace("Got scheduler " + scheduler.getSchedulerName() + " ("
+                        + scheduler.getSchedulerInstanceId() + ")");
+
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
                 for (final Trigger trigger : triggersOfJob) {
                     logger.debug("Unscheduling trigger " + trigger.getGroup() + ":" + trigger.getName());
                     scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
                 }
                 final String[] jobGroupNames = scheduler.getJobGroupNames();
-                if (jobGroupNames.length == 0) {
-                    logger.debug("Quartz scheduler shutting down...");
-                    try {
-                        scheduler.shutdown();
-                    } catch (final SchedulerException e) {
-                        logger.error("Encountered exception shutting down Quartz: " + e.getMessage(), e);
+                if (schedulerInstanceName.equals(scheduler.getSchedulerName())) {
+                    if (jobGroupNames.length == 0) {
+                        logger.debug("Quartz scheduler shutting down...");
+                        try {
+                            scheduler.shutdown();
+                        } catch (final SchedulerException e) {
+                            logger
+                                    .error("Encountered exception shutting down Quartz: " + e.getMessage(),
+                                            e);
+                        }
+                    } else {
+                        logger
+                                .trace("Was using an existing scheduler instance, so won't perform actual shutdown.");
                     }
                 } else {
                     logger.debug("Job groups still running "
@@ -139,14 +183,11 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
             } catch (final SchedulerException e) {
                 logger.error(e.getMessage(), e);
             }
-
-            final boolean nulled = schedulerRef.compareAndSet(scheduler, null);
-            if (!nulled) {
-                logger
-                        .warn("Tried to set schedulerRef to null but was set to a different value!");
+            if (!schedulerRef.compareAndSet(scheduler, null)) {
+                logger.warn("Tried to set schedulerRef to null but was set to a different value!");
             }
         } else {
-            logger.debug("scheduler is null!");
+            logger.error("schedulerRef.get() returned null!");
         }
     }
 }
