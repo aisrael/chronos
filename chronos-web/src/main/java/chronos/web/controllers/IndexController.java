@@ -138,8 +138,8 @@ public class IndexController {
             final Trigger newTrigger = new SimpleTrigger(triggerName, triggerGroupName, jobName,
                     jobGroupName, oldTrigger.getNextFireTime(), oldTrigger.getEndTime(), oldTrigger
                             .getRepeatCount(), newInterval);
-            logger.debug("Rescheduling trigger " + triggerGroupName + ":" + triggerName + " of job "
-                    + jobGroupName + ":" + jobName + " from " + period + " to "
+            logger.debug("Rescheduling trigger " + oldTrigger.getFullName() + " of job "
+                    + oldTrigger.getFullJobName() + " from " + period + " to "
                     + Period.humanize(newInterval));
             scheduler.rescheduleJob(triggerName, triggerGroupName, newTrigger);
         }

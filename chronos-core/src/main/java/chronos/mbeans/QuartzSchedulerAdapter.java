@@ -19,6 +19,7 @@ package chronos.mbeans;
 
 import static chronos.Chronos.CHRONOS;
 import static chronos.TestJob.TEST_JOB_NAME;
+import static org.quartz.core.QuartzSchedulerResources.getUniqueIdentifier;
 import static org.quartz.impl.StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME;
 import static org.quartz.impl.StdSchedulerFactory.PROP_THREAD_POOL_CLASS;
 
@@ -89,8 +90,9 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                 }
                 final Scheduler scheduler = factory.getScheduler();
                 if (null != scheduler) {
-                    logger.trace("Got scheduler " + scheduler.getSchedulerName() + " ("
-                            + scheduler.getSchedulerInstanceId() + ")");
+                    logger.trace("Got scheduler "
+                            + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
+                                    .getSchedulerInstanceId()));
                     if (schedulerRef.compareAndSet(null, scheduler)) {
                         if (createOwnScheduler) {
                             logger.debug("Quartz scheduler successfully created. Starting...");
@@ -153,8 +155,9 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
         final Scheduler scheduler = schedulerRef.get();
         if (scheduler != null) {
             try {
-                logger.trace("Got scheduler " + scheduler.getSchedulerName() + " ("
-                        + scheduler.getSchedulerInstanceId() + ")");
+                logger.trace("Got scheduler "
+                        + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
+                                .getSchedulerInstanceId()));
 
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
                 for (final Trigger trigger : triggersOfJob) {
@@ -166,7 +169,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                     if (jobGroupNames.length == 0) {
                         logger.debug("Quartz scheduler shutting down...");
                         try {
-                            scheduler.shutdown();
+                            scheduler.shutdown(true);
                         } catch (final SchedulerException e) {
                             logger
                                     .error("Encountered exception shutting down Quartz: " + e.getMessage(),
