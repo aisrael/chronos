@@ -91,6 +91,9 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                     logger.trace("Got scheduler "
                             + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
                                     .getSchedulerInstanceId()));
+
+                    TestJob.initializeTestJob(scheduler);
+
                     if (schedulerRef.compareAndSet(null, scheduler)) {
                         if (createOwnScheduler) {
                             logger.debug("Quartz scheduler successfully created. Starting...");
