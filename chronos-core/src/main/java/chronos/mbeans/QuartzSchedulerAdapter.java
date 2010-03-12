@@ -169,12 +169,12 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                                             e);
                         }
                     } else {
-                        logger
-                                .trace("Was using an existing scheduler instance, so won't perform actual shutdown.");
+                        logger.debug("Job groups still running "
+                                + StringUtils.arrayToCommaDelimitedString(jobGroupNames));
                     }
                 } else {
-                    logger.debug("Job groups still running "
-                            + StringUtils.arrayToCommaDelimitedString(jobGroupNames));
+                    logger
+                            .trace("Was using an existing scheduler instance, so won't perform actual shutdown.");
                 }
             } catch (final SchedulerException e) {
                 logger.error(e.getMessage(), e);

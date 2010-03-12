@@ -81,9 +81,6 @@
               <groupId>chronos.chronos</groupId>
               <artifactId>chronos-core</artifactId>
               <includeInApplicationXml>true</includeInApplicationXml>
-              <!-- 
-              <bundleDir>/lib</bundleDir>
-              -->
             </jarModule>
             <jarModule>
               <groupId>org.springframework</groupId>
