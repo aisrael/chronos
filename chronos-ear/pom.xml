@@ -22,7 +22,7 @@
       <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
       <type>jar</type>
-      <version>0.1-SNAPSHOT</version>
+      <version>0.1-SNAPSHOT</version>      
       <exclusions>
         <exclusion>
           <groupId>opensymphony</groupId>
