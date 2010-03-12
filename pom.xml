@@ -67,4 +67,27 @@
     </dependencies>
   </dependencyManagement>
 
+
+  <profiles>
+    <profile>
+      <id>jcl-jdk14</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <jcl.logger>org.apache.commons.logging.impl.Jdk14Logger</jcl.logger>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>jcl-log4j</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <jcl.logger>org.apache.commons.logging.impl.Log4JLogger</jcl.logger>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>

@@ -22,7 +22,7 @@
       <groupId>chronos.chronos</groupId>
       <artifactId>chronos-core</artifactId>
       <type>jar</type>
-      <version>0.1-SNAPSHOT</version>      
+      <version>0.1-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>opensymphony</groupId>
@@ -74,7 +74,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ear-plugin</artifactId>
+        <version>2.4.1</version>
         <configuration>
+          <filtering>true</filtering>
           <version>5</version>
           <modules>
             <jarModule>
@@ -96,6 +98,12 @@
         </configuration>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
   </build>
 
 </project>
