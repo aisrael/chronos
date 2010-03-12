@@ -44,6 +44,11 @@ public class TestJob implements StatefulJob {
     /**
      *
      */
+    public static final String TEST_JOB_NAME = "TestJob";
+
+    /**
+     *
+     */
     public static final String INITIAL_CONTEXT = InitialContext.class.getName();
 
     private static final Log logger = LogFactory.getLog(TestJob.class);
@@ -89,7 +94,7 @@ public class TestJob implements StatefulJob {
     public static final void initializeTestJob(final Scheduler scheduler) throws SchedulerException {
         try {
             final Class<?> clazz = Class.forName(TestJob.class.getName());
-            final JobDetail jobDetail = new JobDetail("TestJob", CHRONOS, clazz);
+            final JobDetail jobDetail = new JobDetail(TEST_JOB_NAME, CHRONOS, clazz);
             final JobDataMap jobDataMap = jobDetail.getJobDataMap();
             jobDataMap.put(InitialContext.class.getName(), new InitialContext());
 

@@ -18,6 +18,7 @@
 
 package chronos.web.controllers;
 
+import static chronos.TestJob.TEST_JOB_NAME;
 import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
 
 import java.util.ArrayList;
@@ -89,6 +90,9 @@ public class IndexController {
                 final SimpleHash job = new SimpleHash();
                 job.put("name", jobName);
                 job.put("class", jobClassName);
+                if (TEST_JOB_NAME.equals(jobName)) {
+                    reschedule(scheduler, groupName, jobName);
+                }
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, groupName);
                 final List<String> triggerNames = new ArrayList<String>(triggersOfJob.length);
                 for (final Trigger trigger : triggersOfJob) {
@@ -96,7 +100,6 @@ public class IndexController {
                 }
                 job.put("triggerNames", collectionToCommaDelimitedString(triggerNames));
                 jobs.add(job);
-
                 logger.debug(jobName + " (" + jobClassName + ") : " + triggerNames);
             }
             final SimpleHash group = new SimpleHash();
@@ -105,6 +108,41 @@ public class IndexController {
             groups.add(group);
         }
         return groups;
+    }
+
+    /**
+     * @param scheduler
+     *        {@link Scheduler}
+     * @param jobGroupName
+     *        job group name
+     * @param jobName
+     *        job name
+     * @throws SchedulerException
+     *         on scheduler exception
+     */
+    private void reschedule(final Scheduler scheduler, final String jobGroupName, final String jobName)
+            throws SchedulerException {
+        final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, jobGroupName);
+        if (triggersOfJob[0] instanceof SimpleTrigger) {
+            final SimpleTrigger oldTrigger = (SimpleTrigger) triggersOfJob[0];
+            final long oldInterval = oldTrigger.getRepeatInterval();
+            final Period period = Period.humanize(oldInterval);
+            final long newInterval;
+            if (period.getValue() == 1) {
+                newInterval = oldInterval * 2;
+            } else {
+                newInterval = oldInterval / 2;
+            }
+            final String triggerName = oldTrigger.getName();
+            final String triggerGroupName = oldTrigger.getGroup();
+            final Trigger newTrigger = new SimpleTrigger(triggerName, triggerGroupName, jobName,
+                    jobGroupName, oldTrigger.getNextFireTime(), oldTrigger.getEndTime(), oldTrigger
+                            .getRepeatCount(), newInterval);
+            logger.debug("Rescheduling trigger " + triggerGroupName + ":" + triggerName + " of job "
+                    + jobGroupName + ":" + jobName + " from " + period + " to "
+                    + Period.humanize(newInterval));
+            scheduler.rescheduleJob(triggerName, triggerGroupName, newTrigger);
+        }
     }
 
     /**

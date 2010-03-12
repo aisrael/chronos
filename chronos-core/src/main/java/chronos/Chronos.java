@@ -22,7 +22,7 @@ package chronos;
  *
  * @author Alistair A. Israel
  */
-public abstract class Chronos {
+public final class Chronos {
 
     /**
      * {@value #CHRONOS}

@@ -17,6 +17,9 @@
  */
 package chronos.mbeans;
 
+import static chronos.Chronos.CHRONOS;
+import static chronos.TestJob.TEST_JOB_NAME;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,9 +28,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Alistair A. Israel
@@ -113,15 +118,32 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
     public final void shutdown() {
         final Scheduler scheduler = schedulerRef.get();
         if (scheduler != null) {
-            logger.debug("Quartz scheduler shutting down...");
             try {
-                scheduler.shutdown();
-                final boolean nulled = schedulerRef.compareAndSet(scheduler, null);
-                if (!nulled) {
-                    logger.warn("Tried to set schedulerRef to null but was set to a different value!");
+                final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(TEST_JOB_NAME, CHRONOS);
+                for (final Trigger trigger : triggersOfJob) {
+                    logger.debug("Unscheduling trigger " + trigger.getGroup() + ":" + trigger.getName());
+                    scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
+                }
+                final String[] jobGroupNames = scheduler.getJobGroupNames();
+                if (jobGroupNames.length == 0) {
+                    logger.debug("Quartz scheduler shutting down...");
+                    try {
+                        scheduler.shutdown();
+                    } catch (final SchedulerException e) {
+                        logger.error("Encountered exception shutting down Quartz: " + e.getMessage(), e);
+                    }
+                } else {
+                    logger.debug("Job groups still running "
+                            + StringUtils.arrayToCommaDelimitedString(jobGroupNames));
                 }
             } catch (final SchedulerException e) {
-                logger.error("Encountered exception shutting down Quartz: " + e.getMessage(), e);
+                logger.error(e.getMessage(), e);
+            }
+
+            final boolean nulled = schedulerRef.compareAndSet(scheduler, null);
+            if (!nulled) {
+                logger
+                        .warn("Tried to set schedulerRef to null but was set to a different value!");
             }
         } else {
             logger.debug("scheduler is null!");

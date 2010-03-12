@@ -66,7 +66,7 @@ public final class ChronosServletListener implements ServletContextListener {
      */
     private MBeanServer findOrCreateChronosMBeanServer() {
         final ArrayList<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-        logger.debug("Got " + servers.size() + " servers");
+        logger.debug("Got " + servers.size() + " MBean servers");
         if (servers.size() == 0) {
             logger.debug("Creating new MBeanServer for \"chronos\"...");
             return MBeanServerFactory.createMBeanServer(CHRONOS);
@@ -118,7 +118,7 @@ public final class ChronosServletListener implements ServletContextListener {
     public void contextDestroyed(final ServletContextEvent event) {
         logger.debug("Chronos is shutting down...");
         final ArrayList<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
-        logger.debug("Got " + servers.size() + " servers");
+        logger.debug("Got " + servers.size() + " MBean servers");
         if (servers.size() != 0) {
             final MBeanServer mbeanServer = servers.get(0);
             try {
