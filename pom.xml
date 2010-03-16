@@ -15,6 +15,7 @@
     <module>chronos-beans</module>
     <module>chronos-web</module>
     <module>chronos-ear</module>
+    <module>quartz-console</module>
   </modules>
 
   <properties>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+  <!-- 
+    ========== Spring container configuration ==========
+  -->
+  <!--
+    Use a custom JNDI bean factory configured not to prepend lookups
+    with "java:comp/env"
+  -->
+  <bean id="jndiFactory" class="org.springframework.jndi.support.SimpleJndiBeanFactory">
+    <property name="resourceRef" value="false" />
+  </bean>
+
+  <!--
+    Configure the CommonAnnotationBeanPostProcessor to always use JNDI
+    lookup (for EJBs) and use the custom JNDI bean factory above.
+  -->
+  <bean
+    class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor">
+    <property name="alwaysUseJndiLookup" value="true" />
+    <property name="jndiFactory" ref="jndiFactory" />
+  </bean>
+
+  <!--
+    Since we're turning off "annotation-config" in the
+    context:component-scan below, we need to explicitly configure an
+    AutowiredAnnotationBeanPostProcessor.
+  -->
+  <bean
+    class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+  <!--
+    Configure annotation-based component scanning, instantiation and
+    dependency injection.
+  -->
+  <context:component-scan base-package="chronos.quartz.console.controllers"
+    annotation-config="false" />
+
+  <!--
+    ========== Quartz Console Servlet Configuration ==========
+  -->
+  <!-- application-wide message resourcebundle -->
+  <bean id="messageSource"
+    class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basename" value="messages" />
+  </bean>
+
+  <!--
+    Support for custom interceptors <bean id="userTokenInterceptor"
+    class="com.talikos.ese.web.support.UserTokenInterceptor" /> <bean
+    class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+    <property name="interceptors"> <ref bean="userTokenInterceptor" />
+    </property> </bean>
+  -->
+
+  <!--
+    Use the DefaultRequestToViewNameTranslator to map "/request.*"
+    requests to automatically use the view "request".
+  -->
+  <bean id="viewNameTranslator"
+    class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator" />
+
+  <!--
+    ========== FreeMarker Configuration ==========
+  -->
+  <bean id="freemarkerConfig"
+    class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+    <property name="templateLoaderPath" value="/WEB-INF/ftl/" />
+    <property name="configLocation" value="/WEB-INF/freemarker.properties" />
+  </bean>
+
+  <!--
+    View resolvers can also be configured with ResourceBundles or XML
+    files. If you need different view resolving based on Locale, you
+    have to use the resource bundle resolver.
+  -->
+  <bean id="viewResolver"
+    class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+    <property name="cache" value="true" />
+    <!--
+      <property name="prefix" value="" />
+    -->
+    <property name="suffix" value=".ftl" />
+    <!--
+      Need the following property set to use macros in spring.ftl
+      (supplied).
+    -->
+    <property name="exposeSpringMacroHelpers" value="true" />
+  </bean>
+
+</beans>

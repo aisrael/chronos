@@ -33,6 +33,6 @@ Replacement for the HTML "body" tag.
 </#macro>
 
 <#--
-Write the HTML title tag. Use the global variable "pageTitle" if available, otherwise default to "Chronos".
+Write the HTML title tag. Use the global variable "pageTitle" if available, otherwise default to "Quartz Console".
 -->
-<#macro pageTitle><title>${.globals.pageTitle!"Chronos"}</title></#macro>
+<#macro pageTitle><title>${.globals.pageTitle!"Quartz Console"}</title></#macro>

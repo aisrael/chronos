@@ -16,13 +16,13 @@
  * Created Mar 9, 2010
  */
 
-package chronos.web.controllers;
+package chronos.quartz.console.controllers;
 
-import static chronos.TestJob.TEST_JOB_NAME;
 import static org.quartz.core.QuartzSchedulerResources.getUniqueIdentifier;
 import static org.springframework.util.StringUtils.collectionToCommaDelimitedString;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +40,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import chronos.utils.time.Period;
-
 import freemarker.template.SimpleHash;
 import freemarker.template.SimpleSequence;
 
@@ -57,15 +56,26 @@ public class IndexController {
      *        {@link Model}
      */
     @RequestMapping("/index.html")
+    @SuppressWarnings("unchecked")
     public final void index(final Model model) {
         model.addAttribute("now", new Date());
         try {
             final StdSchedulerFactory factory = new StdSchedulerFactory();
             factory.initialize();
-            final Scheduler scheduler = factory.getScheduler();
+            final Collection<Scheduler> allSchedulers = factory.getAllSchedulers();
+            logger.debug("Got " + allSchedulers.size() + " schedulers...");
+            final Scheduler scheduler;
+            if (allSchedulers.size() == 0) {
+                logger.debug("Creating scheduler instance");
+                scheduler = factory.getScheduler();
+            } else {
+                scheduler = allSchedulers.iterator().next();
+                logger.debug("Using existing scheduler instance");
+            }
             logger.debug("Got scheduler "
                     + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler.getSchedulerInstanceId())
                     + "@" + System.identityHashCode(scheduler));
+
             model.addAttribute("jobGroups", extractJobGroups(scheduler));
             model.addAttribute("triggerGroups", extractTriggers(scheduler));
         } catch (final SchedulerException e) {
@@ -94,9 +104,6 @@ public class IndexController {
                 final SimpleHash job = new SimpleHash();
                 job.put("name", jobName);
                 job.put("class", jobClassName);
-                if (TEST_JOB_NAME.equals(jobName)) {
-                    reschedule(scheduler, groupName, jobName);
-                }
                 final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, groupName);
                 final List<String> triggerNames = new ArrayList<String>(triggersOfJob.length);
                 for (final Trigger trigger : triggersOfJob) {
@@ -112,41 +119,6 @@ public class IndexController {
             groups.add(group);
         }
         return groups;
-    }
-
-    /**
-     * @param scheduler
-     *        {@link Scheduler}
-     * @param jobGroupName
-     *        job group name
-     * @param jobName
-     *        job name
-     * @throws SchedulerException
-     *         on scheduler exception
-     */
-    private void reschedule(final Scheduler scheduler, final String jobGroupName, final String jobName)
-            throws SchedulerException {
-        final Trigger[] triggersOfJob = scheduler.getTriggersOfJob(jobName, jobGroupName);
-        if (triggersOfJob[0] instanceof SimpleTrigger) {
-            final SimpleTrigger oldTrigger = (SimpleTrigger) triggersOfJob[0];
-            final long oldInterval = oldTrigger.getRepeatInterval();
-            final Period period = Period.humanize(oldInterval);
-            final long newInterval;
-            if (period.getValue() == 1) {
-                newInterval = oldInterval * 2;
-            } else {
-                newInterval = oldInterval / 2;
-            }
-            final String triggerName = oldTrigger.getName();
-            final String triggerGroupName = oldTrigger.getGroup();
-            final Trigger newTrigger = new SimpleTrigger(triggerName, triggerGroupName, jobName,
-                    jobGroupName, oldTrigger.getNextFireTime(), oldTrigger.getEndTime(), oldTrigger
-                            .getRepeatCount(), newInterval);
-            logger.debug("Rescheduling trigger " + oldTrigger.getFullName() + " of job "
-                    + oldTrigger.getFullJobName() + " from " + period + " to "
-                    + Period.humanize(newInterval));
-            scheduler.rescheduleJob(triggerName, triggerGroupName, newTrigger);
-        }
     }
 
     /**

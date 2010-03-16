@@ -90,7 +90,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
                 if (null != scheduler) {
                     logger.trace("Got scheduler "
                             + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
-                                    .getSchedulerInstanceId()));
+                                    .getSchedulerInstanceId()) + "@" + System.identityHashCode(scheduler));
 
                     TestJob.initializeTestJob(scheduler);
 
@@ -158,7 +158,7 @@ public class QuartzSchedulerAdapter implements QuartzSchedulerAdapterMBean {
             try {
                 logger.trace("Got scheduler "
                         + getUniqueIdentifier(scheduler.getSchedulerName(), scheduler
-                                .getSchedulerInstanceId()));
+                                .getSchedulerInstanceId()) + "@" + System.identityHashCode(scheduler));
                 TestJob.unschedule(scheduler);
                 final String[] jobGroupNames = scheduler.getJobGroupNames();
                 if (schedulerInstanceName.equals(scheduler.getSchedulerName())) {
