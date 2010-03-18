@@ -8,15 +8,12 @@ function jq(id) {
  }
 
 function hideJob(jobId) {
-  console.log("hiding " + jobId);
   $(jq(jobId)).hide('slow');
 }
 
 $(document).ready(function(){
-  console.log("ready");
   $(".group .job").each(function() {
     id = $(this).attr("id");
-    console.log("id:" + id); 
     $(this).find(".edit").bind("click", {id: id}, function(e) {
       hideJob(e.data.id);
     });
