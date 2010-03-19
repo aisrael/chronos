@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>opensymphony</groupId>
+  <artifactId>quartz</artifactId>
+  <version>1.7.3</version>
+  <versioning>
+    <versions>
+      <version>1.7.3</version>
+    </versions>
+    <lastUpdated>20100319070546</lastUpdated>
+  </versioning>
+</metadata>
