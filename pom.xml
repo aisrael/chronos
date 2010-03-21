@@ -15,6 +15,7 @@
     <module>chronos-web</module>
     <module>chronos-ear</module>
     <module>quartz-console</module>
+    <module>gr-web</module>
   </modules>
 
   <properties>

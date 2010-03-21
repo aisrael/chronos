@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>chronos</artifactId>
+    <groupId>chronos</groupId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>chronos.chronos</groupId>
+  <artifactId>gr-web</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-crud</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-gorm</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+
+    <!-- Grails defaults to Ehache for the second-level Hibernate cache. -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-ehcache</artifactId>
+      <version>3.3.1.GA</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <version>1.7.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>jms</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+
+        <!-- We have JCL-over-SLF4J instead. -->
+        <exclusion>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- For ease of development and testing, we include the HSQLDB database. -->
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.10</version>
+    </dependency>
+
+    <!-- Use Log4J for logging. This artifact also pulls in the Log4J JAR. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.8</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!--
+      Those dependencies are required but are missing when the project has been created using the
+      org.grails::grails-maven.archetype::1.2.0 :-(
+    -->
+
+    <!--
+      Deploying a war to a web container (e.g. Tomcat) and ommitting this dependency will result in Exception sending context
+      initialized event to listener instance of class org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener caused
+      by NoClassDefFoundError: org.codehaus.groovy.grails.cli.CommandLineHelper This behaviour is caused by the scaffolding
+      plugin (i.e. class DefaultGrailsTemplateGenerator) now using class CommandLineHelper contained within grails-bootstrap. As
+      DefaultGrailsTemplateGenerator is within grails-core, it appears somewhat strange that it in fact depends on
+      grails-bootstrap (I'd expected to be it the other way 'round).
+    -->
+    <dependency>
+      <groupId>org.grails</groupId>
+      <artifactId>grails-bootstrap</artifactId>
+      <version>1.2.0</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!--
+      grails:run-app (and executing a war as well) and ommitting this dependency will result in Context initialization failed
+      caused by NoClassDefFoundError: javassist/util/proxy/MethodFilter This behaviour is caused by Grails (and Hibernate as
+      well) now using javassist (instead of cglib). This dependency should be considered a work-around, as it might be more
+      appropriate to add it to grails-gorm
+    -->
+    <dependency>
+      <groupId>javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.8.0.GA</version>
+      <scope>runtime</scope>
+    </dependency>
+
+  </dependencies>
+
+  <repositories>
+    <!-- Required to get hold of JTA -->
+    <repository>
+      <id>maven2-repository.dev.java.net</id>
+      <name>Java.net Repository for Maven</name>
+      <url>http://download.java.net/maven/2/</url>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <pluginManagement />
+    <plugins>
+      <plugin>
+        <groupId>org.grails</groupId>
+        <artifactId>grails-maven-plugin</artifactId>
+        <version>1.2.0</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>init</goal>
+              <goal>maven-clean</goal>
+              <goal>validate</goal>
+              <goal>config-directories</goal>
+              <goal>maven-compile</goal>
+              <goal>maven-test</goal>
+              <goal>maven-war</goal>
+              <goal>maven-functional-test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>tools</id>
+      <activation>
+        <property>
+          <name>java.vendor</name>
+          <value>Sun Microsystems Inc.</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.6.0</version>
+          <scope>system</scope>
+          <systemPath>/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Classes/classes.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+</project>
