@@ -44,6 +44,13 @@
       <type>war</type>
       <version>0.1-SNAPSHOT</version>
     </dependency>
+    <!-- gr-web -->
+    <dependency>
+      <groupId>chronos.chronos</groupId>
+      <artifactId>gr-web</artifactId>
+      <type>war</type>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
     <!-- quartz-console -->
     <dependency>
       <groupId>chronos.chronos</groupId>
