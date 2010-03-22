@@ -26,6 +26,12 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
         // runtime 'mysql:mysql-connector-java:5.1.5'
+	compile 'opensymphony:quartz:1.7.3'
     }
 
+}
+
+grails.war.resources = { stagingDir ->
+	println "****** STAGING DIR: ${stagingDir}"
+	delete(file:"${stagingDir}/WEB-INF/lib/quartz-1.7.3.jar")
 }

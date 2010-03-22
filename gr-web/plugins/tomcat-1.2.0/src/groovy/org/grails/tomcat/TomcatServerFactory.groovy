@@ -1,0 +1,14 @@
+package org.grails.tomcat
+
+import grails.web.container.*
+
+class TomcatServerFactory implements EmbeddableServerFactory {
+
+	EmbeddableServer createInline(String basedir, String webXml, String contextPath, ClassLoader classLoader) {
+		return new TomcatServer(basedir, webXml, contextPath, classLoader)
+	}
+
+	EmbeddableServer createForWAR(String warPath, String contextPath) {
+		return new TomcatServer(warPath, contextPath)		
+	}
+}
