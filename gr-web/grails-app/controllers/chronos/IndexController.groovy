@@ -27,10 +27,11 @@ class IndexController {
             jobGroups[jobGroupName] = scheduler.getJobNames(jobGroupName).inject([:]) { jobs, jobName->
                 log.debug "Job ${jobGroupName}.${jobName}..."
                 def jobDetail = scheduler.getJobDetail(jobName, jobGroupName)
-                def triggerNames = scheduler.getTriggersOfJob(jobName, jobGroupName).collect { trigger ->
-                    trigger.name
-                }.join(', ')
-                jobs[jobName] = [name : jobName, className : jobDetail.jobClass.name, triggerNames : triggerNames]
+                def triggers = scheduler.getTriggersOfJob(jobName, jobGroupName).collect { trigger ->
+                    [ name : trigger.name,
+                    className : trigger.getClass().getName() ]
+                }
+                jobs[jobName] = [name : jobName, className : jobDetail.jobClass.name, triggers : triggers]
                 jobs
             }
         }

@@ -14,7 +14,13 @@
 <ul>
 <g:each in="${jobGroups[jobGroupName]}" var="e">
 <g:set var="job" value="${e.value}" />
-<li>${job.name} (${job.className}) : ${job.triggerNames}</li>
+<li>${job.name} (${job.className})
+<ul>
+<g:each in="${job.triggers}" var="trigger">
+<li>${trigger.name} (${trigger.className})</li>
+</g:each>
+</ul>
+</li>
 </g:each>
 </ul>
 </dd>
