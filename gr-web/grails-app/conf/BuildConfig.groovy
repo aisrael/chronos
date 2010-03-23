@@ -32,6 +32,8 @@ grails.project.dependency.resolution = {
 }
 
 grails.war.resources = { stagingDir ->
-	println "****** STAGING DIR: ${stagingDir}"
+    // remove Quartz JAR (and use provided Quartz JAR)
 	delete(file:"${stagingDir}/WEB-INF/lib/quartz-1.7.3.jar")
+    // remove SLF4J to Log4J binding for JBoss (uses provided SLF4J to JBoss binding) 
+    delete(file:"${stagingDir}/WEB-INF/lib/slf4j-log4j12-1.5.8.jar")
 }
