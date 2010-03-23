@@ -26,11 +26,23 @@
       <groupId>org.grails</groupId>
       <artifactId>grails-crud</artifactId>
       <version>1.2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.grails</groupId>
       <artifactId>grails-gorm</artifactId>
       <version>1.2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Grails defaults to Ehache for the second-level Hibernate cache. -->
@@ -57,7 +69,10 @@
         <exclusion>
           <artifactId>servlet-api</artifactId>
         </exclusion>
-
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
         <!-- We have JCL-over-SLF4J instead. -->
         <exclusion>
           <artifactId>commons-logging</artifactId>
@@ -71,8 +86,15 @@
       <artifactId>hsqldb</artifactId>
       <version>1.8.0.10</version>
     </dependency>
-
-    <!-- Use Log4J for logging. This artifact also pulls in the Log4J JAR. -->
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.8</version>
+      <scope>provided</scope>
+    </dependency>
+ 
+    <!-- Use Log4J for logging (build time). This artifact also pulls in the Log4J JAR. -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
