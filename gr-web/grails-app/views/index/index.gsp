@@ -8,10 +8,13 @@
 <h3>Jobs</h3>
 <p>Got <%=jobGroupNames.size() %> job group names</p>
 <dl>
-<g:each in="${jobGroupNames}" var="jobGroupName"><dt>${jobGroupName}</dt>
+<g:each in="${jobGroupNames}" var="jobGroupName">
+<dt>${jobGroupName}</dt>
 <dd>
 <ul>
-<g:each in="${jobGroups[jobGroupName]}" var="job"><g:set var="jobDetail" value="${job.value}" /><li>${job.key}</li>
+<g:each in="${jobGroups[jobGroupName]}" var="e">
+<g:set var="job" value="${e.value}" />
+<li>${job.name} (${job.className}) : ${job.triggerNames}</li>
 </g:each>
 </ul>
 </dd>
