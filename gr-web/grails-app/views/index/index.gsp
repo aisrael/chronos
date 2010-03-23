@@ -17,7 +17,7 @@
 <li>${job.name} (${job.className})
 <ul>
 <g:each in="${job.triggers}" var="trigger">
-<li>${trigger.name} (${trigger.className})</li>
+<li>${trigger.name} (${trigger.className}): ${trigger.description}</li>
 </g:each>
 </ul>
 </li>
